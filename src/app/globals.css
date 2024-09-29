@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+section.hero {
+    display: block;
+    @media (min-width: 768px) {
+        display: grid;
+        grid-template-columns: .4fr .6fr;
+    }
+}
+
+select,
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="text"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    border-radius: 1rem;
+    border: 1px solid #d1d5db;
+    padding: 0.5rem;
+    background-color: #f3f4f6;
+}
+
+input[type="email"]:disabled,
+input[type="password"]:disabled,
+input[type="tel"]:disabled,
+input[type="text"]:disabled {
+    background-color: #d1d5db;
+    border: 0;
+    cursor: not-allowed;
+    color: #9ca3af;
+}
+
+label {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+label + input {
+    margin-top: -2px;
+}
+
+button,
+.button {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #4b5563;
+    font-weight: 600;
+    border: 1px solid #d1d5db;
+    border-radius: 1rem;
+    padding: 0.5rem 1.5rem;
+}
+
+button[type="submit"],
+.submit,
+button.primary {
+    border-color: #1f2937;
+    background-color: #1f2937;
+    color: #ffffff;
+}
+
+button[type="submit"]:disabled,
+.submit:disabled {
+    cursor: not-allowed;
+    background-color: #f87171;
+}
+
+div.tabs > * {
+    background-color: #d1d5db;
+    color: #4b5563;
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+}
+
+div.tabs > *.active {
+    background-color: #1f2937;
+    color: #ffffff;
+}
+
+.flying-button-parent button {
+    border-color: #1f2937;
+    background-color: #1f2937;
+    color: #ffffff;
+    border-radius: 9999px;
+}
