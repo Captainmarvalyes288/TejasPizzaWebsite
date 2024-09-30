@@ -29,7 +29,7 @@ export default function EditableImage({link, setLink}) {
   return (
     <div className="flex flex-col items-center">
       {link && (
-        <div style={{ width: '250px', height: '250px', position: 'relative' }}>
+        <div style={{ width: '100px', height: '100px', position: 'relative' }}>
           <Image
             className="rounded-lg"
             src={link}

@@ -3,6 +3,7 @@ import Trash from "@/components/icons/Trash";
 import EditableImage from "@/components/layout/EditableImage";
 import MenuItemPriceProps from "@/components/layout/MenuItemPriceProps";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function MenuItemForm({ onSubmit, menuItem }) {
   const [image, setImage] = useState(menuItem?.image || '');
@@ -12,7 +13,6 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
   const [sizes, setSizes] = useState(menuItem?.sizes || []);
   const [category, setCategory] = useState(menuItem?.category || '');
   const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState('');
   const [extraIngredientPrices, setExtraIngredientPrices] = useState(menuItem?.extraIngredientPrices || []);
 
   useEffect(() => {
@@ -23,34 +23,24 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
     });
   }, []);
 
-  function handleCategoryChange(ev) {
-    const value = ev.target.value;
-    if (value === 'new') {
-      setCategory('');
-    } else {
-      setCategory(value);
-      setNewCategory('');
+  function handleFormSubmit(ev) {
+    ev.preventDefault();
+    const data = {
+      image, name, description, basePrice, sizes, extraIngredientPrices,
+      category: category?.length > 0 ? category : null,
+    };
+    if (!data.image || !data.name || !data.description || !data.basePrice) {
+      toast.error('Please fill in all required fields');
+      return;
     }
-  }
-
-  function handleNewCategoryChange(ev) {
-    setNewCategory(ev.target.value);
-    setCategory(ev.target.value);
+    onSubmit(ev, data);
   }
 
   return (
-    <form
-      onSubmit={ev =>
-        onSubmit(ev, {
-          image, name, description, basePrice, sizes, extraIngredientPrices, category,
-        })
-      }
-      className="mt-8 max-w-2xl mx-auto">
-      <div
-        className="md:grid items-start gap-4"
-        style={{ gridTemplateColumns: '.3fr .7fr' }}>
+    <form onSubmit={handleFormSubmit} className="mt-8 max-w-2xl mx-auto">
+      <div className="md:grid items-start gap-4">
         <div>
-          <EditableImage link={image} setLink={setImage} width={300} height={300} />
+          <EditableImage link={image} setLink={setImage} />
         </div>
         <div className="grow">
           <label>Item name</label>
@@ -58,42 +48,49 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
             type="text"
             value={name}
             onChange={ev => setName(ev.target.value)}
+            required
           />
           <label>Description</label>
           <input
             type="text"
             value={description}
             onChange={ev => setDescription(ev.target.value)}
+            required
           />
           <label>Category</label>
-          <select value={category} onChange={handleCategoryChange}>
+          <select value={category} onChange={ev => setCategory(ev.target.value)} required>
+            <option value="">Select a category</option>
             {categories?.length > 0 && categories.map(c => (
               <option key={c._id} value={c._id}>{c.name}</option>
             ))}
-            <option value="new">Add new category</option>
           </select>
-          {category === 'new' && (
+          <div>
+          <label className="w-24 text-gray-600">Base price</label>
+          <div className="flex items-center mt-2 mb-2">
+            <span className="text-gray-600 mr-2 pt-1 pb-1">$</span>
             <input
-              type="text"
-              value={newCategory}
-              onChange={handleNewCategoryChange}
-              placeholder="Enter new category name"
+              type="number"
+              value={basePrice}
+              onChange={ev => setBasePrice(ev.target.value)}
+              required
+              className="grow"
+              step="0.01"
+              min="0"
             />
-          )}
-          <label>Base price</label>
-          <input
-            type="text"
-            value={basePrice}
-            onChange={ev => setBasePrice(ev.target.value)}
+          </div>
+        </div>
+          <MenuItemPriceProps
+            name={'Sizes'}
+            addLabel={'Add item size'}
+            props={sizes}
+            setProps={setSizes}
           />
-          <MenuItemPriceProps name={'Sizes'}
-                              addLabel={'Add item size'}
-                              props={sizes}
-                              setProps={setSizes} />
-          <MenuItemPriceProps name={'Extra ingredients'}
-                              addLabel={'Add ingredients prices'}
-                              props={extraIngredientPrices}
-                              setProps={setExtraIngredientPrices}/>
+          <MenuItemPriceProps
+            name={'Extra ingredients'}
+            addLabel={'Add ingredients prices'}
+            props={extraIngredientPrices}
+            setProps={setExtraIngredientPrices}
+          />
           <button type="submit">Save</button>
         </div>
       </div>

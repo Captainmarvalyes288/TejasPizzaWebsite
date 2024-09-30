@@ -48,7 +48,7 @@ export async function POST(req) {
 
   const options = {
     amount: totalAmount * 100, 
-    currency: "INR",
+    currency: "USD",
     receipt: orderDoc._id.toString(),
     notes: {
       orderId: orderDoc._id.toString(),

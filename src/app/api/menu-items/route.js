@@ -22,15 +22,20 @@ export async function POST(req) {
       }
     }
 
+    if (!data.price || isNaN(parseFloat(data.price))) {
+      return Response.json({ error: "Price is required and must be a number" }, { status: 400 });
+    }
+
     try {
       const menuItemDoc = await MenuItem.create({
         ...data,
+        price: parseFloat(data.price), 
         category: categoryId
       });
       return Response.json(menuItemDoc);
     } catch (error) {
       console.error("Error creating menu item:", error);
-      return Response.json({ error: "Failed to create menu item" }, { status: 400 });
+      return Response.json({ error: "Failed to create menu item: " + error.message }, { status: 400 });
     }
   } else {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

@@ -1,16 +1,31 @@
-import {isAdmin} from "@/app/api/auth/[...nextauth]/route";
-import {Category} from "@/models/Category";
+import { Category } from "@/models/Category";
+import { isAdmin } from "@/app/api/auth/[...nextauth]/route";
 import mongoose from "mongoose";
 
 export async function POST(req) {
   mongoose.connect(process.env.MONGO_URL);
-  const {name} = await req.json();
+  const data = await req.json();
+  
   if (await isAdmin()) {
-    const categoryDoc = await Category.create({name});
-    return Response.json(categoryDoc);
+    if (data.name && typeof data.name === 'string') {
+      try {
+        const newCategory = await Category.create({ name: data.name.trim() });
+        return Response.json(newCategory);
+      } catch (error) {
+        console.error("Error creating new category:", error);
+        return Response.json({ error: "Failed to create new category" }, { status: 400 });
+      }
+    } else {
+      return Response.json({ error: "Category name is required" }, { status: 400 });
+    }
   } else {
-    return Response.json({});
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
+}
+
+export async function GET() {
+  mongoose.connect(process.env.MONGO_URL);
+  return Response.json(await Category.find());
 }
 
 export async function PUT(req) {
@@ -20,13 +35,6 @@ export async function PUT(req) {
     await Category.updateOne({_id}, {name});
   }
   return Response.json(true);
-}
-
-export async function GET() {
-  mongoose.connect(process.env.MONGO_URL);
-  return Response.json(
-    await Category.find()
-  );
 }
 
 export async function DELETE(req) {
