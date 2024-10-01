@@ -1,8 +1,8 @@
 'use client';
-import {SessionProvider} from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { createContext, useEffect, useState } from "react";
-import { useRouter } from 'next/router';
 import toast from "react-hot-toast";
+import { useRouter } from 'next/navigation';
 
 export const CartContext = createContext({});
 
@@ -20,37 +20,37 @@ export function cartProductPrice(cartProduct) {
 }
 
 export function AppProvider({children}) {
-  const [cartProducts,setCartProducts] = useState([]);
-
-  const ls = typeof window !== 'undefined' ? window.localStorage : null;
+  const [cartProducts, setCartProducts] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
-    if (ls && ls.getItem('cart')) {
-      setCartProducts( JSON.parse( ls.getItem('cart') ) );
+    if (typeof window !== 'undefined') {
+      const ls = window.localStorage;
+      if (ls && ls.getItem('cart')) {
+        setCartProducts(JSON.parse(ls.getItem('cart')));
+      }
     }
   }, []);
+
+  function saveCartProductsToLocalStorage(cartProducts) {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('cart', JSON.stringify(cartProducts));
+    }
+  }
 
   function clearCart() {
     setCartProducts([]);
     saveCartProductsToLocalStorage([]);
-    const router = useRouter();
-    router.push('/');
   }
 
   function removeCartProduct(indexToRemove) {
     setCartProducts(prevCartProducts => {
       const newCartProducts = prevCartProducts
-        .filter((v,index) => index !== indexToRemove);
+        .filter((v, index) => index !== indexToRemove);
       saveCartProductsToLocalStorage(newCartProducts);
       return newCartProducts;
     });
     toast.success('Product removed');
-  }
-
-  function saveCartProductsToLocalStorage(cartProducts) {
-    if (ls) {
-      ls.setItem('cart', JSON.stringify(cartProducts));
-    }
   }
 
   function addToCart(product, size=null, extras=[]) {
@@ -62,95 +62,24 @@ export function AppProvider({children}) {
     });
   }
 
+  function clearCartAndRedirect() {
+    clearCart();
+    router.push('/');
+    toast.success('Payment successful! Cart cleared.');
+  }
+
   return (
     <SessionProvider>
       <CartContext.Provider value={{
-        cartProducts, setCartProducts,
-        addToCart, removeCartProduct, clearCart,
+        cartProducts,
+        setCartProducts,
+        addToCart,
+        removeCartProduct,
+        clearCart,
+        clearCartAndRedirect,
       }}>
         {children}
       </CartContext.Provider>
     </SessionProvider>
   );
 }
-
-
-// 'use client';
-
-// import { SessionProvider } from "next-auth/react";
-// import { createContext, useEffect, useState, useContext } from "react";
-// import toast from "react-hot-toast";
-
-// export const CartContext = createContext({});
-
-// export function cartProductPrice(cartProduct) {
-//   let price = cartProduct.basePrice;
-//   if (cartProduct.size) {
-//     price += cartProduct.size.price;
-//   }
-//   if (cartProduct.extras?.length > 0) {
-//     for (const extra of cartProduct.extras) {
-//       price += extra.price;
-//     }
-//   }
-//   return price;
-// }
-
-// export function AppProvider({children}) {
-//   const [cartProducts, setCartProducts] = useState([]);
-//   const ls = typeof window !== 'undefined' ? window.localStorage : null;
-
-//   useEffect(() => {
-//     if (ls && ls.getItem('cart')) {
-//       setCartProducts(JSON.parse(ls.getItem('cart')));
-//     }
-//   }, []);
-
-//   function clearCart() {
-//     setCartProducts([]);
-//     saveCartProductsToLocalStorage([]);
-//   }
-
-//   function removeCartProduct(indexToRemove) {
-//     setCartProducts(prevCartProducts => {
-//       const newCartProducts = prevCartProducts
-//         .filter((v,index) => index !== indexToRemove);
-//       saveCartProductsToLocalStorage(newCartProducts);
-//       return newCartProducts;
-//     });
-//     toast.success('Product removed');
-//   }
-
-//   function saveCartProductsToLocalStorage(cartProducts) {
-//     if (ls) {
-//       ls.setItem('cart', JSON.stringify(cartProducts));
-//     }
-//   }
-
-//   function addToCart(product, size=null, extras=[]) {
-//     setCartProducts(prevProducts => {
-//       const cartProduct = {...product, size, extras};
-//       const newProducts = [...prevProducts, cartProduct];
-//       saveCartProductsToLocalStorage(newProducts);
-//       return newProducts;
-//     });
-//   }
-
-//   return (
-//     <SessionProvider>
-//       <CartContext.Provider value={{
-//         cartProducts,
-//         setCartProducts,
-//         addToCart,
-//         removeCartProduct,
-//         clearCart,
-//       }}>
-//         {children}
-//       </CartContext.Provider>
-//     </SessionProvider>
-//   );
-// }
-
-// export function useCart() {
-//   return useContext(CartContext);
-// }
