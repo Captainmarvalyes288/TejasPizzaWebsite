@@ -27,7 +27,7 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
     ev.preventDefault();
     const data = {
       image, name, description, basePrice, sizes, extraIngredientPrices,
-      category: category?.length > 0 ? category : null,
+      category: category || null,
     };
     if (!data.image || !data.name || !data.description || !data.basePrice) {
       toast.error('Please fill in all required fields');
@@ -74,7 +74,7 @@ export default function MenuItemForm({ onSubmit, menuItem }) {
               onChange={ev => setBasePrice(ev.target.value)}
               required
               className="grow"
-              step="0.01"
+
               min="0"
             />
           </div>

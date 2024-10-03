@@ -65,7 +65,7 @@ export default function MenuItem(menuItem) {
               <Image
                 src={image}
                 alt={name}
-                width={300} height={200}
+                width={200} height={200}
                 className="mx-auto" />
               <h2 className="text-lg font-bold text-center mb-2">{name}</h2>
               <p className="text-center text-gray-500 text-sm mb-2">

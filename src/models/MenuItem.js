@@ -9,7 +9,6 @@ const MenuItemSchema = new Schema({
   image: {type: String},
   name: { type: String, required: true },
   description: { type: String },
-  price: { type: Number, required: true },
   category: { type: mongoose.Types.ObjectId, ref: 'Category' },
   basePrice: {type: Number},
   sizes: {type:[ExtraPriceSchema]},

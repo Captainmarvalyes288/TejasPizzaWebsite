@@ -27,10 +27,11 @@ export default function NewMenuItemPage() {
         
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to save menu item');
+          throw new Error(errorData.error || 'Failed to save menu item');
         }
         
-        resolve();
+        const savedItem = await response.json();
+        resolve(savedItem);
       } catch (error) {
         console.error('Error saving menu item:', error);
         reject(error);

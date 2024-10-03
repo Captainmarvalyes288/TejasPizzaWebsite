@@ -76,7 +76,7 @@ export default function CartPage() {
             },
             notes: {
               address: address.streetAddress,
-              orderId: data.orderId  // Make sure this is passed from the checkout API
+              orderId: data.orderId  
             },
             theme: {
               color: "#3399cc",

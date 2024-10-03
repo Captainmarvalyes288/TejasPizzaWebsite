@@ -21,15 +21,13 @@ export async function POST(req) {
         }
       }
     }
-
-    if (!data.price || isNaN(parseFloat(data.price))) {
-      return Response.json({ error: "Price is required and must be a number" }, { status: 400 });
+    if (!data.basePrice || isNaN(parseFloat(data.basePrice))) {
+      return Response.json({ error: "Base price is required and must be a number" }, { status: 400 });
     }
-
     try {
       const menuItemDoc = await MenuItem.create({
         ...data,
-        price: parseFloat(data.price), 
+        basePrice: parseFloat(data.basePrice),
         category: categoryId
       });
       return Response.json(menuItemDoc);

@@ -4,6 +4,9 @@ import {usePathname} from "next/navigation";
 
 export default function UserTabs({isAdmin}) {
   const path = usePathname();
+
+  const dataAnalysisUrl = "https://databot-dxddfnc9covoubmvezfngf.streamlit.app/";
+
   return (
     <div className="flex mx-auto gap-2 tabs justify-center flex-wrap">
       <Link
@@ -32,6 +35,14 @@ export default function UserTabs({isAdmin}) {
           >
             Users
           </Link>
+          <a
+            href={dataAnalysisUrl}
+            className="tab"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Data Analysis
+          </a>
         </>
       )}
       <Link
