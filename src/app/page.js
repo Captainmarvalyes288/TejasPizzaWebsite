@@ -1,9 +1,39 @@
+"use client"
+import { useEffect } from 'react';
 import Header from "@/components/layout/Header";
 import Hero from "@/components/layout/Hero";
 import HomeMenu from "@/components/layout/HomeMenu";
 import SectionHeaders from "@/components/layout/SectionHeaders";
 
 export default function Home() {
+  useEffect(() => {
+    // Set chatbot config
+    window.embeddedChatbotConfig = {
+      chatbotId: "F6XT_x6-r_Q-35-xb0gb2",
+      domain: "www.chatbase.co"
+      }
+  
+    // Create and append the chatbot script
+    const script = document.createElement("script");
+    script.src = "https://www.chatbase.co/embed.min.js";
+    script.setAttribute("chatbotId", "F6XT_x6-r_Q-35-xb0gb2");
+    script.setAttribute("domain", "www.chatbase.co");
+    script.defer = true;
+  
+    script.onload = () => console.log("Chatbase script loaded successfully.");
+    script.onerror = (error) => console.error("Error loading Chatbase script:", error);
+  
+    document.body.appendChild(script);
+    console.log("Chatbase script appended.");
+  
+    // Cleanup script when component unmounts
+    return () => {
+      document.body.removeChild(script);
+      console.log("Chatbase script removed.");
+    };
+  }, []);
+  
+
   return (
     <>
       <Hero />
@@ -33,5 +63,5 @@ export default function Home() {
         </div>
       </section>
     </>
-  )
+  );
 }
